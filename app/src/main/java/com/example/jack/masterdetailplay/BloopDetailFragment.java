@@ -1,6 +1,7 @@
 package com.example.jack.masterdetailplay;
 
 import android.app.Activity;
+import android.opengl.GLSurfaceView;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,59 +11,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
-/**
- * A fragment representing a single Bloop detail screen.
- * This fragment is either contained in a {@link BloopListActivity}
- * in two-pane mode (on tablets) or a {@link BloopDetailActivity}
- * on handsets.
- */
-public class BloopDetailFragment extends Fragment {
-    /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
+public class BloopDetailFragment extends Fragment
+{
     public static final String ARG_ITEM_ID = "item_id";
+    private GLSurfaceView mGLView;
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
-    private DirectoryModel.FileItem mItem;
-
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public BloopDetailFragment() {
+    public BloopDetailFragment()
+    {
+        super();
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-            mItem = DirectoryModel.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
-
-            Activity activity = this.getActivity();
-            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-            if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.content);
-            }
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.bloop_detail, container, false);
-
-        // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.bloop_detail)).setText(mItem.details);
-        }
-
-        return rootView;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+        mGLView = new MyGLSurfaceView(this.getActivity()); //I believe you may also use getActivity().getApplicationContext();
+        return mGLView;
     }
 }
