@@ -43,8 +43,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
-    private final float[] mRotationMatrix = new float[16];
-    private float mAngle;
+    private final float[] mRotationMatrixX = new float[16];
+    private final float[] mRotationMatrixY = new float[16];
+    public volatile float mAngleX;
+    public volatile float mAngleY;
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         // Set the background frame color
@@ -53,14 +55,15 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         mSquare   = new Square();
         for (int i=0; i < 100; i++) {
             mPoint   = new Point();
-            mPoint.SetVerts(((float)Math.random()*1.2f -0.6f), ((float)Math.random()*1.6f -0.8f), ((float)Math.random())*1.6f -0.8f);
+            mPoint.SetVerts((float)i*0.01f, ((float)Math.sin(i*0.0628f)), 0);
             mPointList.add(mPoint);
         }
 
     }
     @Override
     public void onDrawFrame(GL10 unused) {
-        float[] scratch = new float[16];
+        float[] scratchX = new float[16];
+        float[] scratchY = new float[16];
         // Draw background color
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         // Set the camera position (View matrix)
@@ -72,15 +75,17 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // Create a rotation for the triangle
         // Use the following code to generate constant rotation.
         // Leave this code out when using TouchEvents.
-         long time = SystemClock.uptimeMillis() % 4000L;
-        mAngle = 0.090f * ((int) time);
-        Matrix.setRotateM(mRotationMatrix, 0, mAngle, 0, 1.0f, 0);
+        //long time = SystemClock.uptimeMillis() % 4000L;
+        //mAngle = 0.090f * ((int) time);
+        Matrix.setRotateM(mRotationMatrixX, 0, mAngleX, 0, 1.0f, 0);
+        Matrix.setRotateM(mRotationMatrixY, 0, mAngleY, 1.0f, 0, 0);
         // Combine the rotation matrix with the projection and camera view
         // Note that the mMVPMatrix factor *must be first* in order
         // for the matrix multiplication product to be correct.
-        Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
+        Matrix.multiplyMM(scratchX, 0, mMVPMatrix, 0, mRotationMatrixX, 0);
+        Matrix.multiplyMM(scratchY, 0, scratchX, 0, mRotationMatrixY, 0);
         for (Point p:mPointList) {
-            p.draw(scratch);
+            p.draw(scratchY);
         }
     }
     @Override
@@ -136,13 +141,19 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
      *
      * @return - A float representing the rotation angle.
      */
-    public float getAngle() {
-        return mAngle;
+    public float getAngleX() {
+        return mAngleX;
+    }
+    public float getAngleY() {
+        return mAngleY;
     }
     /**
      * Sets the rotation angle of the triangle shape (mTriangle).
      */
-    public void setAngle(float angle) {
-        mAngle = angle;
+    public void setAngleX(float angle) {
+        mAngleX = angle;
+    }
+    public void setAngleY(float angle) {
+        mAngleY = angle;
     }
 }
